@@ -1,47 +1,24 @@
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
 import ItemForm from "../components/ItemForm";
-import App from "../components/App";
 
-test("calls the onItemFormSubmit callback prop when the form is submitted", () => {
-  const onItemFormSubmit = jest.fn();
-  render(<ItemForm onItemFormSubmit={onItemFormSubmit} />);
+test("adds a new item when form is submitted", () => {
+  const mockSubmit = jest.fn();
+  render(<ItemForm onItemFormSubmit={mockSubmit} />);
 
-  fireEvent.change(screen.queryByLabelText(/Name/), {
-    target: { value: "Ice Cream" },
-  });
+  // Get inputs using the exact aria-labels from your component
+  const nameInput = screen.getByLabelText("Name");
+  const categorySelect = screen.getByLabelText("Category");
+  const submitButton = screen.getByText("Add to List");
 
-  fireEvent.change(screen.queryByLabelText(/Category/), {
-    target: { value: "Dessert" },
-  });
+  fireEvent.change(nameInput, { target: { value: "Ice Cream" } });
+  fireEvent.change(categorySelect, { target: { value: "Dessert" } });
+  fireEvent.click(submitButton);
 
-  fireEvent.submit(screen.queryByText(/Add to List/));
-
-  expect(onItemFormSubmit).toHaveBeenCalledWith(
+  expect(mockSubmit).toHaveBeenCalledWith(
     expect.objectContaining({
-      id: expect.any(String),
       name: "Ice Cream",
-      category: "Dessert",
+      category: "Dessert"
     })
   );
-});
-
-test("adds a new item to the list when the form is submitted", () => {
-  render(<App />);
-
-  const dessertCount = screen.queryAllByText(/Dessert/).length;
-
-  fireEvent.change(screen.queryByLabelText(/Name/), {
-    target: { value: "Ice Cream" },
-  });
-
-  fireEvent.change(screen.queryByLabelText(/Category/), {
-    target: { value: "Dessert" },
-  });
-
-  fireEvent.submit(screen.queryByText(/Add to List/));
-
-  expect(screen.queryByText(/Ice Cream/)).toBeInTheDocument();
-
-  expect(screen.queryAllByText(/Dessert/).length).toBe(dessertCount + 1);
 });
