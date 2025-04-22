@@ -1,11 +1,23 @@
-import React, { useState } from "react";
-import ShoppingList from "./ShoppingList";
-import Header from "./Header";
-import itemData from "../data/items";
+import React, { useState } from 'react';
+import ShoppingList from './ShoppingList';
+import ItemForm from './ItemForm';
 
-// In your App.js
 function App() {
-  // ... your existing state and functions ...
+  const [isDarkMode, setIsDarkMode] = useState(false); // Add this state
+  const [items, setItems] = useState([]); // Make sure you have items state
+
+  const handleDarkModeClick = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  // Add these functions if they don't exist
+  const handleAddItem = (newItem) => {
+    setItems([...items, newItem]);
+  };
+
+  const handleDeleteItem = (id) => {
+    setItems(items.filter(item => item.id !== id));
+  };
 
   return (
     <div className={`App ${isDarkMode ? "dark" : "light"}`}>
@@ -15,14 +27,10 @@ function App() {
           {isDarkMode ? "Dark" : "Light"} Mode
         </button>
       </header>
-      
-      {/* Add the ItemForm component here */}
       <ItemForm onItemFormSubmit={handleAddItem} />
-      
       <ShoppingList items={items} onItemDelete={handleDeleteItem} />
     </div>
   );
 }
 
 export default App;
-
